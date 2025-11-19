@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:15-alpine
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER} 
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} 
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - flipnlearn-net
+
+  server:
+    container_name: server
+    build: ./backend
+    env_file: .env
+    environment:
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+    ports:
+      - "${SERVER_PORT}:8080"
+    depends_on:
+      - postgres
+    networks:
+      - flipnlearn-net
+    volumes:
+      - ./backend:/app
+      - ~/.m2:/root/.m2
+
+volumes:
+  postgres_data:
+networks:
+  flipnlearn-net:
+    driver: bridge
