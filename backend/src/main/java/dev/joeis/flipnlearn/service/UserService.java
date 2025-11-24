@@ -18,7 +18,7 @@ public class UserService {
 
     public User createUser(String email, String plainPassword, String name) {
         if(userRepository.findByEmail(email).isPresent()) {
-            throw new RuntimeException("Email already taken by another user");
+            throw new RuntimeException("Please use another email");
         }
 
         User user = new User();
