@@ -4,6 +4,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useAuth } from '../../hooks/useAuth';
 import type { SignupRequest } from '../../types/auth.types';
+import { Input } from '../forms/Input';
+import { Alert } from '../alerts/Alert';
+import { Button } from '../buttons/Button';
 
 const signupSchema = yup.object({
   name: yup.string().required('Name is required').min(2, 'Name must be at least 2 characters'),
@@ -29,11 +32,10 @@ export const SignupForm: React.FC = () => {
         email: data.email,
         password: data.password,
       };
-      
+
       await signup(signupData);
-      reset(); // Limpiar formulario en éxito
+      reset();
     } catch (error) {
-      // El error ya está manejado en el hook useAuth
       console.error('Signup error:', error);
     }
   };
@@ -41,111 +43,71 @@ export const SignupForm: React.FC = () => {
   return (
     <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Create Account</h2>
-      
-      {/* Mensaje de éxito */}
+
       {authState.isSuccess && (
-        <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
-          Account created successfully! You can now log in.
-        </div>
+        <Alert
+          type="success"
+          message="Account created successfully! You can now log in."
+        />
       )}
 
-      {/* Mensaje de error */}
       {authState.error && (
-        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-          {authState.error}
-        </div>
+        <Alert type="error" message={authState.error} />
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {/* Name Field */}
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-            Full Name
-          </label>
-          <input
-            {...register('name')}
-            type="text"
-            id="name"
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Enter your full name"
-          />
-          {errors.name && (
-            <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
-          )}
-        </div>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="">
 
-        {/* Email Field */}
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email Address
-          </label>
-          <input
-            {...register('email')}
-            type="email"
-            id="email"
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Enter your email"
-          />
-          {errors.email && (
-            <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-          )}
-        </div>
+        <Input
+          id="name"
+          label="Full Name"
+          type="text"
+          placeholder="Enter your full name"
+          register={register}
+          error={errors.name}
+        />
 
-        {/* Password Field */}
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-            Password
-          </label>
-          <input
-            {...register('password')}
-            type="password"
-            id="password"
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Enter your password"
-          />
-          {errors.password && (
-            <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
-          )}
-        </div>
+        <Input
+          id="email"
+          label="Email Address"
+          type="email"
+          placeholder="Enter your email"
+          register={register}
+          error={errors.email}
+        />
 
-        {/* Confirm Password Field */}
-        <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-            Confirm Password
-          </label>
-          <input
-            {...register('confirmPassword')}
-            type="password"
-            id="confirmPassword"
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Confirm your password"
-          />
-          {errors.confirmPassword && (
-            <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>
-          )}
-        </div>
+        <Input
+          id="password"
+          label="Password"
+          type="password"
+          placeholder="Enter your password"
+          register={register}
+          error={errors.password}
+        />
 
-        {/* Submit Button */}
-        <button
+        <Input
+          id="confirmPassword"
+          label="Confirm Password"
+          type="password"
+          placeholder="Cofirm your password"
+          register={register}
+          error={errors.confirmPassword}
+        />
+
+        <Button
           type="submit"
-          disabled={authState.isLoading}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          isLoading={authState.isLoading}
+          loadingText="Creating Account..."
+          variant="primary"
+          fullWidth={true}
+          className="mt-4 py-2.5"
         >
-          {authState.isLoading ? (
-            <span className="flex items-center">
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Creating Account...
-            </span>
-          ) : (
-            'Create Account'
-          )}
-        </button>
+          Create Account
+        </Button>
+
       </form>
 
-      {/* Login Link */}
       <div className="mt-6 text-center">
         <p className="text-sm text-gray-600">
           Already have an account?{' '}
