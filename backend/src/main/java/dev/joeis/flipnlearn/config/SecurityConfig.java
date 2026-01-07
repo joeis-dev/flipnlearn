@@ -15,9 +15,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .cors(cors -> {})
             .csrf(csfr -> csfr.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/signup").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/public/**").permitAll()
                 .anyRequest().authenticated()
             )
@@ -27,7 +28,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEnconder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
