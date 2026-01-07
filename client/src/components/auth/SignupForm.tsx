@@ -20,13 +20,18 @@ const signupSchema = yup.object({
 type SignupFormData = yup.InferType<typeof signupSchema>;
 
 export const SignupForm: React.FC = () => {
-  const { signup, authState, resetAuthState } = useAuth();
+  // Our custom hook for authentication
+  const { signup, authState } = useAuth();
+
+  // React Hook Form setup for validation
   const { register, handleSubmit, formState: { errors }, reset } = useForm<SignupFormData>({
     resolver: yupResolver(signupSchema),
   });
 
   const onSubmit = async (data: SignupFormData) => {
     try {
+
+      // Getting values from the form
       const signupData: SignupRequest = {
         name: data.name,
         email: data.email,

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { SignupRequest, ApiResponse, User, AuthState } from '../types/auth.types';
+import type { SignupRequest, ApiResponse, AuthState } from '../types/auth.types';
 import { auth } from '../services/auth';
 
 export const useAuth = () => {
